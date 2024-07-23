@@ -2,5 +2,7 @@
 
 public class Series : Movie
 {
-    public override string ToString() => base.ToString() + " (Series)";
+    public string Tittle { get; set; }
+    public string Type { get; set; }
+    public override string ToString() => $"Id: {Id}, Tittle: {Tittle}, Type: {Type} (Series)";
 }
