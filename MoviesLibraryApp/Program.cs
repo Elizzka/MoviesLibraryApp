@@ -9,16 +9,16 @@ WriteAllToConsole(movieRepository);
 
 static void AddMovie(IRepository<Movie> movieRepository)
 {
-    movieRepository.Add(new Movie { Tittle = "The Green Mile", Type = "Drama" });
-    movieRepository.Add(new Movie { Tittle = "Forrest Gump", Type = "Drama" });
-    movieRepository.Add(new Movie { Tittle = "Joker", Type = "Thriller" });
+    movieRepository.Add(new Movie { Title = "The Green Mile", Type = "Drama" });
+    movieRepository.Add(new Movie { Title = "Forrest Gump", Type = "Drama" });
+    movieRepository.Add(new Movie { Title = "Joker", Type = "Thriller" });
     movieRepository.Save();
 }
 
 static void AddSeries(IWriteRepository<Series> seriesRepository)
 {
-    seriesRepository.Add(new Series { Tittle = "Breaking Bad", Type = "Crime" });
-    seriesRepository.Add(new Series { Tittle = "The Crown", Type = "Historical" });
+    seriesRepository.Add(new Series { Title = "Breaking Bad", Type = "Crime" });
+    seriesRepository.Add(new Series { Title = "The Crown", Type = "Historical" });
     seriesRepository.Save();
 }
 

@@ -2,9 +2,9 @@
 {
     public class Movie : EntityBase
     {
-        public string? Tittle { get; set; }
+        public string? Title { get; set; }
         public string? Type { get; set; }
 
-        public override string ToString() => $"Id: {Id}, Tittle: {Tittle}, Type: {Type}";
+        public override string ToString() => $"Id: {Id}, Title: {Title}, Type: {Type}";
     }
 }
