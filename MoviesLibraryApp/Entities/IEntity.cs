@@ -1,8 +1,8 @@
 ﻿namespace MoviesLibraryApp.Entities;
 
-    public interface IEntity
-    {
-        public int Id { get; set; }
+public interface IEntity
+{
+    public int Id { get; set; }
 
-    }
+}
 
