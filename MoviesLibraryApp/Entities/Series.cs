@@ -1,10 +1,7 @@
 ﻿namespace MoviesLibraryApp.Entities;
 
-public class Series : Movie
+public class Series : EntityBase
 {
-    public override string ToString()
-    {
-        return $"Id: {Id}, Title: {Title}, Type: {Type} (Series)";
-    }
+    public override string ToString() => base.ToString() + " (Series)";
 
 }

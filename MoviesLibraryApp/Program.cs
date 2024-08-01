@@ -1,7 +1,7 @@
 ﻿using MoviesLibraryApp.Repositories;
 using MoviesLibraryApp.Entities;
 using MoviesLibraryApp.Data;
-using MoviesLibraryApp.Repositories.Extensions;
+using MoviesLibraryApp.Services;
 
 Console.WriteLine("Welcome to the movie library!");
 Console.WriteLine("Select an option that interests you:");
@@ -11,14 +11,62 @@ Console.WriteLine("Enter '3' if you want to add a movie to the library.");
 Console.WriteLine("Enter '4' if you want to add a series to the library.");
 Console.WriteLine("Enter 'q' if you want to quit.");
 
-var movieRepository = new SqlRepository<Movie>(new MoviesLibraryAppDbContext());    
+var dbContext = new MoviesLibraryAppDbContext();
+var movieRepository = new SqlRepository<Movie>(dbContext);
+var seriesRepository = new SqlRepository<Series>(dbContext);
 
-if (!movieRepository.GetAll().Any())
+var jsonMovieService = new JsonFileService<Movie>("movies.json");
+var jsonSeriesService = new JsonFileService<Series>("series.json");
+var auditMovieService = new AuditService<Movie>("audit_log_movies.txt");
+var auditSeriesService = new AuditService<Series>("audit_log_series.txt");
+
+var moviesFromFile = jsonMovieService.LoadFromFile();
+var seriesFromFile = jsonSeriesService.LoadFromFile();
+
+if (moviesFromFile.Any())
 {
-    AddInitialMoviesAndSeries(movieRepository);
+    foreach (var movie in moviesFromFile)
+    {
+        movieRepository.Add(movie);
+    }
 }
 
-movieRepository.ItemAdded += MovieRepositoryOnItemAdded;
+if (seriesFromFile.Any())
+{
+    foreach (var series in seriesFromFile)
+    {
+        seriesRepository.Add(series);
+    }
+}
+
+if (!movieRepository.GetAll().Any() && !seriesRepository.GetAll().Any())
+{
+    AddInitialMoviesAndSeries(movieRepository, seriesRepository, auditMovieService, auditSeriesService);
+}
+
+movieRepository.ItemAdded += (sender, movie) =>
+{
+    auditMovieService.LogAudit("Added Movie", movie);
+    Console.WriteLine($"{DateTime.Now:yyyy-MM-dd HH:mm:ss} - Added Movie - {movie.Title}");
+};
+
+seriesRepository.ItemAdded += (sender, series) =>
+{
+    auditSeriesService.LogAudit("Added Series", series);
+    Console.WriteLine($"{DateTime.Now:yyyy-MM-dd HH:mm:ss} - Added Series - {series.Title}");
+};
+
+movieRepository.ItemRemoved += (sender, movie) =>
+{
+    auditMovieService.LogAudit("Removed Movie", movie);
+    Console.WriteLine($"{DateTime.Now:yyyy-MM-dd HH:mm:ss} - Removed Movie - {movie.Title}");
+};
+
+seriesRepository.ItemRemoved += (sender, series) =>
+{
+    auditSeriesService.LogAudit("Removed Series", series);
+    Console.WriteLine($"{DateTime.Now:yyyy-MM-dd HH:mm:ss} - Removed Series - {series.Title}");
+};
 
 while (true)
 {
@@ -28,18 +76,20 @@ while (true)
     switch (input)
     {
         case "1":
-            WriteAllToConsole(movieRepository);
+            WriteAllToConsole(movieRepository, seriesRepository);
             break;
         case "2":
-            RemoveItemFromLibrary(movieRepository);
+            RemoveItemFromLibrary(movieRepository, seriesRepository);
             break;
         case "3":
             AddMovie(movieRepository);
             break;
         case "4":
-            AddSeries(movieRepository);
+            AddSeries(seriesRepository);
             break;
         case "q":
+            jsonMovieService.SaveToFile(movieRepository.GetAll());
+            jsonSeriesService.SaveToFile(seriesRepository.GetAll());
             return;
         default:
             Console.WriteLine("Invalid option, please try again.");
@@ -47,13 +97,7 @@ while (true)
     }
 }
 
-static void MovieRepositoryOnItemAdded(object? sender, Movie e)
-{
-    var data = DateTime.Now.ToString("yyyy-MM-dd HH:mm:ss");
-    Console.WriteLine($"{data} - Added - {e.Title}");
-}
-
-static void AddInitialMoviesAndSeries(IRepository<Movie> repository)
+static void AddInitialMoviesAndSeries(IRepository<Movie> movieRepo, IRepository<Series> seriesRepo, AuditService<Movie> movieAuditService, AuditService<Series> seriesAuditService)
 {
     var movies = new List<Movie>
     {
@@ -68,29 +112,53 @@ static void AddInitialMoviesAndSeries(IRepository<Movie> repository)
         new Series { Title = "The Crown", Type = "Historical" }
     };
 
-    repository.AddBatch(movies.ToArray());
-    repository.AddBatch(series.ToArray());
-}
-
-static void WriteAllToConsole(IReadRepository<IEntity> repository)
-{
-    var items = repository.GetAll();
-    foreach (var item in items)
+    foreach (var movie in movies)
     {
-        Console.WriteLine(item);
+        movieRepo.Add(movie);
+        movieAuditService.LogAudit("Initial Add Movie", movie);
+    }
+
+    foreach (var serie in series)
+    {
+        seriesRepo.Add(serie);
+        seriesAuditService.LogAudit("Initial Add Series", serie);
     }
 }
 
-static void RemoveItemFromLibrary(IRepository<Movie> repository)
+static void WriteAllToConsole(IReadRepository<Movie> movieRepo, IReadRepository<Series> seriesRepo)
+{
+    var movies = movieRepo.GetAll();
+    var series = seriesRepo.GetAll();
+
+    Console.WriteLine("Movies:");
+    foreach (var movie in movies)
+    {
+        Console.WriteLine(movie);
+    }
+
+    Console.WriteLine("\nSeries:");
+    foreach (var serie in series)
+    {
+        Console.WriteLine(serie);
+    }
+}
+
+static void RemoveItemFromLibrary(IRepository<Movie> movieRepo, IRepository<Series> seriesRepo)
 {
     Console.WriteLine("Enter a title for the item you want to delete:");
     var title = Console.ReadLine();
 
-    var item = repository.GetAll().FirstOrDefault(x => x.Title == title);
-    if (item != null)
+    var movie = movieRepo.GetAll().FirstOrDefault(x => x.Title == title);
+    if (movie != null)
     {
-        repository.Remove(item);
-        Console.WriteLine($"The item '{title}' has been removed.");
+        movieRepo.Remove(movie);
+        return;
+    }
+
+    var series = seriesRepo.GetAll().FirstOrDefault(x => x.Title == title);
+    if (series != null)
+    {
+        seriesRepo.Remove(series);
     }
     else
     {
@@ -98,30 +166,26 @@ static void RemoveItemFromLibrary(IRepository<Movie> repository)
     }
 }
 
-static void AddMovie(IRepository<Movie> repository)
+static void AddMovie(IRepository<Movie> movieRepo)
 {
-    Console.WriteLine("Enter the title of the video you want to add:");
+    Console.WriteLine("Enter the title of the movie you want to add:");
     var title = Console.ReadLine();
 
-    Console.WriteLine("Please specify the type of video:");
+    Console.WriteLine("Please specify the type of the movie:");
     var type = Console.ReadLine();
 
     var movie = new Movie { Title = title, Type = type };
-    repository.Add(movie);
-
-    //Console.WriteLine($"The video '{title}' has been added to the library.");
+    movieRepo.Add(movie);
 }
 
-static void AddSeries(IRepository<Movie> repository)
+static void AddSeries(IRepository<Series> seriesRepo)
 {
     Console.WriteLine("Enter the title of the series you want to add:");
     var title = Console.ReadLine();
 
-    Console.WriteLine("Please specify the type of series:");
+    Console.WriteLine("Please specify the type of the series:");
     var type = Console.ReadLine();
 
     var series = new Series { Title = title, Type = type };
-    repository.Add(series);
-
-    Console.WriteLine($"The series '{title}' has been added to the library.");
+    seriesRepo.Add(series);
 }
