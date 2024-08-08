@@ -1,8 +1,10 @@
-﻿using MoviesLibraryApp.Entities;
-
-namespace MoviesLibraryApp.Services
+﻿namespace MoviesLibraryApp.Services
 {
-    public class AuditService<T> where T : class, IEntity, new()
+    using System;
+    using System.IO;
+    using MoviesLibraryApp.Entities;
+
+    public class AuditService<T> : IAuditService<T>
     {
         private readonly string _auditFileName;
 

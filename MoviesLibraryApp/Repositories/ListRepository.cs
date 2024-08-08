@@ -7,6 +7,8 @@
     {
         private readonly List<T> _items = new();
 
+        public event EventHandler<T>? ItemAdded;
+        public event EventHandler<T>? ItemRemoved;
         public IEnumerable<T> GetAll()
         {
             return _items.ToList();
@@ -16,6 +18,7 @@
         {
             item.Id = _items.Count + 1;
             _items.Add(item);
+            OnItemAdded(item);
         }
 
         public T GetById(int id)
@@ -26,10 +29,21 @@
         public void Remove(T item)
         {
             _items.Remove(item);
+            OnItemRemoved(item);
         }
 
         public void Save()
         {
+        }
+
+        protected virtual void OnItemAdded(T item)
+        {
+            ItemAdded?.Invoke(this, item);
+        }
+
+        protected virtual void OnItemRemoved(T item)
+        {
+            ItemRemoved?.Invoke(this, item);
         }
     }
 }

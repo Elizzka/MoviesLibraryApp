@@ -2,7 +2,7 @@
 
 namespace MoviesLibraryApp.Services
 {
-    public class JsonFileService<T>
+    public class JsonFileService<T> : IJsonFileService<T>
     {
         private readonly string _filePath;
 
@@ -31,4 +31,5 @@ namespace MoviesLibraryApp.Services
         }
     }
 }
+
 
