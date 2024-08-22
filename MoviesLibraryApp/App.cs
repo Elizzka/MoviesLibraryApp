@@ -1,7 +1,9 @@
-﻿using MoviesLibraryApp.DataProviders;
-using MoviesLibraryApp.Entities;
-using MoviesLibraryApp.Repositories;
+﻿using MoviesLibraryApp.Components.CsvReader;
+using MoviesLibraryApp.Components.DataProviders;
+using MoviesLibraryApp.Data.Entities;
+using MoviesLibraryApp.Data.Repositories;
 using MoviesLibraryApp.Services;
+using System.Xml.Linq;
 
 namespace MoviesLibraryApp
 {
@@ -15,6 +17,7 @@ namespace MoviesLibraryApp
         private readonly IAuditService<Series> _seriesAuditService;
         private readonly IMovieProvider _movieProvider;
         private readonly ISeriesProvider _seriesProvider;
+        private readonly ICsvReader _csvReader;
 
         public App(IRepository<Series> seriesRepo,
             IRepository<Movie> movieRepo,
@@ -23,7 +26,8 @@ namespace MoviesLibraryApp
             IAuditService<Movie> movieAuditService,
             IAuditService<Series> seriesAuditService,
             IMovieProvider movieProvider,
-            ISeriesProvider seriesProvider)
+            ISeriesProvider seriesProvider,
+            ICsvReader csvReader)
         {
             _seriesRepo = seriesRepo;
             _movieRepo = movieRepo;
@@ -33,14 +37,79 @@ namespace MoviesLibraryApp
             _seriesAuditService = seriesAuditService;
             _movieProvider = movieProvider;
             _seriesProvider = seriesProvider;
+            _csvReader = csvReader;
         }
         
         public void Run()
         {
+            DisplayProductionsDirectors();
+            CsvToXml();
+            QueryXml();
             LoadDataFromFiles();
-
             DisplayMovieInformation();
             DisplaySeriesInformation();
+        }
+
+        private void CsvToXml()
+        {
+            var records = _csvReader.ProcessProductions("C:\\Users\\elizz\\OneDrive\\Pulpit\\Projekty P\\MoviesLibraryApp\\MoviesLibraryApp\\Resources\\Files\\production.csv");
+            var document = new XDocument();
+
+            var productions = new XElement("Productions", records
+                .Select(x =>
+                new XElement("Production",
+                new XAttribute("Title", x.Title),
+                new XAttribute("Year", x.Year),
+                new XAttribute("Director", x.Director),
+                new XAttribute("Type", x.Type))));
+
+            document.Add(productions);
+            document.Save("production.xml");
+        }
+
+        private static void QueryXml()
+        {
+            var document = XDocument.Load("production.xml");
+            var titles = document
+                .Elements("Productions")?
+                .Elements("Production")
+                .Where(x => x.Attribute("Type")?.Value == "Drama")
+                .Select(x => x.Attribute("Title")?.Value);
+
+            Console.WriteLine();
+            foreach (var title in titles)
+            {
+                Console.WriteLine(title);
+            }
+        }
+
+        private void DisplayProductionsDirectors()
+        {
+            var directors = _csvReader.ProcessDirectors("C:\\Users\\elizz\\OneDrive\\Pulpit\\Projekty P\\MoviesLibraryApp\\MoviesLibraryApp\\Resources\\Files\\director.csv");
+            var productions = _csvReader.ProcessProductions("C:\\Users\\elizz\\OneDrive\\Pulpit\\Projekty P\\MoviesLibraryApp\\MoviesLibraryApp\\Resources\\Files\\production.csv");
+
+            var productionsDirectors = productions.Join(
+                directors, 
+                x => x.Director,
+                x => x.Name,
+                (production, director) =>
+                new
+                {
+                    production.Director,
+                    director.YearOfBirth,
+                    director.CountryOfBirth,
+                    production.Title
+                })
+                .OrderByDescending(x => x.CountryOfBirth)
+                .ThenBy(x => x.YearOfBirth);
+
+            foreach (var production in productionsDirectors)
+            {
+                Console.WriteLine($"Country Of Birth: {production.CountryOfBirth}");
+                Console.WriteLine($"\t Director: {production.Director}");
+                Console.WriteLine($"\t Year Of Birth: {production.YearOfBirth}");
+                Console.WriteLine($"\t Title: {production.Title}");
+            }
         }
 
         private void LoadDataFromFiles()

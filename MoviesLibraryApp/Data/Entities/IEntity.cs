@@ -1,4 +1,4 @@
-﻿namespace MoviesLibraryApp.Entities;
+﻿namespace MoviesLibraryApp.Data.Entities;
 
 public interface IEntity
 {

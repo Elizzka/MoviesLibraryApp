@@ -1,6 +1,6 @@
-﻿namespace MoviesLibraryApp.Repositories
+﻿namespace MoviesLibraryApp.Data.Repositories
 {
-    using MoviesLibraryApp.Entities;
+    using MoviesLibraryApp.Data.Entities;
     using System.Collections.Generic;
 
     public class ListRepository<T> : IRepository<T> where T : class, IEntity, new()

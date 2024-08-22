@@ -1,13 +1,14 @@
-﻿using MoviesLibraryApp.Entities;
+﻿using MoviesLibraryApp.Data.Entities;
+using MoviesLibraryApp.Data.Repositories;
 
-namespace MoviesLibraryApp.Repositories.Extensions;
+namespace MoviesLibraryApp.Data.Repositories.Extensions;
 
 public static class RepositoryExtensions
 {
     public static void AddBatch<T>(this IRepository<T> repository, T[] items)
         where T : class, IEntity
     {
-        foreach(var item in items)
+        foreach (var item in items)
         {
             repository.Add(item);
         }

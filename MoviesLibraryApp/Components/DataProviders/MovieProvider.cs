@@ -1,7 +1,7 @@
-﻿using MoviesLibraryApp.Entities;
-using MoviesLibraryApp.Repositories;
+﻿using MoviesLibraryApp.Data.Entities;
+using MoviesLibraryApp.Data.Repositories;
 
-namespace MoviesLibraryApp.DataProviders;
+namespace MoviesLibraryApp.Components.DataProviders;
 
 public class MovieProvider : IMovieProvider
 {

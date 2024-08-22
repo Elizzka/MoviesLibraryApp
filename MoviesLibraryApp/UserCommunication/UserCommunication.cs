@@ -1,5 +1,5 @@
-﻿using MoviesLibraryApp.Entities;
-using MoviesLibraryApp.Repositories;
+﻿using MoviesLibraryApp.Data.Entities;
+using MoviesLibraryApp.Data.Repositories;
 using MoviesLibraryApp.Services;
 
 namespace MoviesLibraryApp.UserCommunication;

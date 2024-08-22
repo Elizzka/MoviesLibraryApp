@@ -1,9 +1,5 @@
 ﻿namespace MoviesLibraryApp.Services
 {
-    using System;
-    using System.IO;
-    using MoviesLibraryApp.Entities;
-
     public class AuditService<T> : IAuditService<T>
     {
         private readonly string _auditFileName;

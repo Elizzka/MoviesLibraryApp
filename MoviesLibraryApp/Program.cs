@@ -1,8 +1,9 @@
 ﻿using Microsoft.Extensions.DependencyInjection;
 using MoviesLibraryApp;
-using MoviesLibraryApp.DataProviders;
-using MoviesLibraryApp.Entities;
-using MoviesLibraryApp.Repositories;
+using MoviesLibraryApp.Components.CsvReader;
+using MoviesLibraryApp.Components.DataProviders;
+using MoviesLibraryApp.Data.Entities;
+using MoviesLibraryApp.Data.Repositories;
 using MoviesLibraryApp.Services;
 using MoviesLibraryApp.UserCommunication;
 
@@ -18,6 +19,7 @@ services.AddSingleton<IAuditService<Movie>>(new AuditService<Movie>("auditLogMov
 services.AddSingleton<IAuditService<Series>>(new AuditService<Series>("auditLogSeries.txt"));
 services.AddSingleton<IMovieProvider, MovieProvider>();
 services.AddSingleton<ISeriesProvider, SeriesProvider>();
+services.AddSingleton<ICsvReader, CsvReader>();
 
 var serviceProvider = services.BuildServiceProvider();
 var app = serviceProvider.GetService<IApp>()!;

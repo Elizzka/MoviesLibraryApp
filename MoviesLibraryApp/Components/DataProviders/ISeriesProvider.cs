@@ -1,6 +1,6 @@
-﻿using MoviesLibraryApp.Entities;
+﻿using MoviesLibraryApp.Data.Entities;
 
-namespace MoviesLibraryApp.DataProviders;
+namespace MoviesLibraryApp.Components.DataProviders;
 
 public interface ISeriesProvider
 {

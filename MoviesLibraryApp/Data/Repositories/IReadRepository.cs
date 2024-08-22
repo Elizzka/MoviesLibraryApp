@@ -1,6 +1,6 @@
-﻿using MoviesLibraryApp.Entities;
+﻿using MoviesLibraryApp.Data.Entities;
 
-namespace MoviesLibraryApp.Repositories;
+namespace MoviesLibraryApp.Data.Repositories;
 
 public interface IReadRepository<out T> where T : class, IEntity
 {

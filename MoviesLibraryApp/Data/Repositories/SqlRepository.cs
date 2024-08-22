@@ -1,7 +1,7 @@
 ﻿using Microsoft.EntityFrameworkCore;
-using MoviesLibraryApp.Entities;
+using MoviesLibraryApp.Data.Entities;
 
-namespace MoviesLibraryApp.Repositories
+namespace MoviesLibraryApp.Data.Repositories
 {
     public class SqlRepository<T> : IRepository<T> where T : class, IEntity, new()
     {

@@ -1,7 +1,7 @@
-﻿using MoviesLibraryApp.Entities;
+﻿using MoviesLibraryApp.Data.Entities;
 using System;
 
-namespace MoviesLibraryApp.Repositories;
+namespace MoviesLibraryApp.Data.Repositories;
 
 public interface IRepository<T> : IReadRepository<T>, IWriteRepository<T>
     where T : class, IEntity

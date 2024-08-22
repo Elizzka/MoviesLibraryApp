@@ -1,5 +1,5 @@
 ﻿using Microsoft.EntityFrameworkCore;
-using MoviesLibraryApp.Entities;
+using MoviesLibraryApp.Data.Entities;
 
 namespace MoviesLibraryApp.Data;
 public class MoviesLibraryAppDbContext : DbContext
