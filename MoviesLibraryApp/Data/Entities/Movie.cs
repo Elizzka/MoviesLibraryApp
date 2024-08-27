@@ -2,6 +2,6 @@
 {
     public class Movie : EntityBase
     {
-        public override string ToString() => base.ToString() + " (Movie)";
+        public override string ToString() => base.ToString() + "(Movie)";
     }
 }

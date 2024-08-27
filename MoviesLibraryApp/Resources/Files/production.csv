@@ -1,33 +1,33 @@
-Title;Year;Director;Type
-Inception;2010;Christopher Nolan;Science Fiction
-Pulp Fiction;1994;Quentin Tarantino;Crime
-The Shawshank Redemption;1994;Frank Darabont;Drama
-The Dark Knight;2008;Christopher Nolan;Superhero
-Fight Club;1999;David Fincher;Drama
-Schindler's List;1993;Steven Spielberg;Historical Drama
-Parasite;2019;Bong Joon-ho;Thriller
-Interstellar;2014;Christopher Nolan;Science Fiction
-Mad Max: Fury Road;2015;George Miller;Action
-The Lord of the Rings: The Fellowship of the Ring;2001;Peter Jackson;Fantasy
-Gladiator;2000;Ridley Scott;Historical Drama
-Black Panther;2018;Ryan Coogler;Superhero
-Whiplash;2014;Damien Chazelle;Drama
-The Grand Budapest Hotel;2014;Wes Anderson;Comedy
-Her;2013;Spike Jonze;Romance
-Memento;2000;Christopher Nolan;Thriller
-The Revenant;2015;Alejandro Gonzalez Inarritu;Adventure
-La La Land;2016;Damien Chazelle;Musical
-12 Years a Slave;2013;Steve McQueen;Historical Drama
-Blade Runner 2049;2017;Denis Villeneuve;Science Fiction
-Stranger Things;2016;The Duffer Brothers;Science Fiction
-The Mandalorian;2019;Jon Favreau;Science Fiction
-Chernobyl;2019;Johan Renck;Historical Drama
-Fargo;2014;Noah Hawley;Crime
-The Queen's Gambit;2020;Scott Frank;Drama
-True Detective;2014;Nic Pizzolatto;Crime
-Succession;2018;Jesse Armstrong;Drama
-Narcos;2015;Chris Brancato;Crime
-Mindhunter;2017;Joe Penhall;Thriller
-Westworld;2016;Jonathan Nolan;Science Fiction
-Better Call Saul;2015;Vince Gilligan & Peter Gould;Crime
-The Boys;2019;Eric Kripke;Superhero
+Title;Year;Director;Type;MovieOrSeries
+Inception;2010;Christopher Nolan;Science Fiction;Movie
+Pulp Fiction;1994;Quentin Tarantino;Crime;Movie
+The Shawshank Redemption;1994;Frank Darabont;Drama;Movie
+The Dark Knight;2008;Christopher Nolan;Superhero;Movie
+Fight Club;1999;David Fincher;Drama;Movie
+Schindler's List;1993;Steven Spielberg;Historical Drama;Movie
+Parasite;2019;Bong Joon-ho;Thriller;Movie
+Interstellar;2014;Christopher Nolan;Science Fiction;Movie
+Mad Max: Fury Road;2015;George Miller;Action;Movie
+The Lord of the Rings: The Fellowship of the Ring;2001;Peter Jackson;Fantasy;Movie
+Gladiator;2000;Ridley Scott;Historical Drama;Movie
+Black Panther;2018;Ryan Coogler;Superhero;Movie
+Whiplash;2014;Damien Chazelle;Drama;Movie
+The Grand Budapest Hotel;2014;Wes Anderson;Comedy;Movie
+Her;2013;Spike Jonze;Romance;Movie
+Memento;2000;Christopher Nolan;Thriller;Movie
+The Revenant;2015;Alejandro Gonzalez Inarritu;Adventure;Movie
+La La Land;2016;Damien Chazelle;Musical;Movie
+12 Years a Slave;2013;Steve McQueen;Historical Drama;Movie
+Blade Runner 2049;2017;Denis Villeneuve;Science Fiction;Movie
+Stranger Things;2016;The Duffer Brothers;Science Fiction;Series
+The Mandalorian;2019;Jon Favreau;Science Fiction;Series
+Chernobyl;2019;Johan Renck;Historical Drama;Series
+Fargo;2014;Noah Hawley;Crime;Series
+The Queen's Gambit;2020;Scott Frank;Drama;Series
+True Detective;2014;Nic Pizzolatto;Crime;Series
+Succession;2018;Jesse Armstrong;Drama;Series
+Narcos;2015;Chris Brancato;Crime;Series
+Mindhunter;2017;Joe Penhall;Thriller;Series
+Westworld;2016;Jonathan Nolan;Science Fiction;Series
+Better Call Saul;2015;Vince Gilligan & Peter Gould;Crime;Series
+The Boys;2019;Eric Kripke;Superhero;Series

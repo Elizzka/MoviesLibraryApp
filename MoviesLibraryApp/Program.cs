@@ -1,7 +1,9 @@
-﻿using Microsoft.Extensions.DependencyInjection;
+﻿using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.DependencyInjection;
 using MoviesLibraryApp;
 using MoviesLibraryApp.Components.CsvReader;
 using MoviesLibraryApp.Components.DataProviders;
+using MoviesLibraryApp.Data;
 using MoviesLibraryApp.Data.Entities;
 using MoviesLibraryApp.Data.Repositories;
 using MoviesLibraryApp.Services;
@@ -20,10 +22,11 @@ services.AddSingleton<IAuditService<Series>>(new AuditService<Series>("auditLogS
 services.AddSingleton<IMovieProvider, MovieProvider>();
 services.AddSingleton<ISeriesProvider, SeriesProvider>();
 services.AddSingleton<ICsvReader, CsvReader>();
+services.AddDbContext<MoviesLibraryAppDbContext>(options => options
+.UseSqlServer("Data Source=DESKTOP-EEF7JMA\\SQLEXPRESS01;Initial Catalog=MoviesLibraryStorage;Integrated Security=True;Trust Server Certificate=True"));
 
 var serviceProvider = services.BuildServiceProvider();
 var app = serviceProvider.GetService<IApp>()!;
 app.Run();
 var appCom = serviceProvider.GetService<IUserCommunication>()!;
 appCom.Communication();
-

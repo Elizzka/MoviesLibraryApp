@@ -1,15 +1,15 @@
 ﻿using Microsoft.EntityFrameworkCore;
+using MoviesLibraryApp.Components.CsvReader.Models;
 using MoviesLibraryApp.Data.Entities;
 
 namespace MoviesLibraryApp.Data;
 public class MoviesLibraryAppDbContext : DbContext
 {
-    public DbSet<Movie> Movies => Set<Movie>();
-    public DbSet<Series> Series => Set<Series>();
-
-    protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
+    public MoviesLibraryAppDbContext(DbContextOptions<MoviesLibraryAppDbContext> options)
+        : base(options)
     {
-        base.OnConfiguring(optionsBuilder);
-        optionsBuilder.UseInMemoryDatabase("StorageAppDb");
     }
+
+    public DbSet<Movie> Movies { get; set; }
+    public DbSet<Series> Series { get; set; }
 }

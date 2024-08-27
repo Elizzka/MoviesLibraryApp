@@ -15,7 +15,8 @@ public static class ProductionExtensions
                 Title = columns[0],
                 Year = int.Parse(columns[1]),
                 Director = columns[2],
-                Type = columns[3]
+                Type = columns[3],
+                MovieOrSeries = columns[4]
             };
         }
     }

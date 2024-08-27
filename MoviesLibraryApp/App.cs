@@ -1,5 +1,7 @@
 ﻿using MoviesLibraryApp.Components.CsvReader;
+using MoviesLibraryApp.Components.CsvReader.Models;
 using MoviesLibraryApp.Components.DataProviders;
+using MoviesLibraryApp.Data;
 using MoviesLibraryApp.Data.Entities;
 using MoviesLibraryApp.Data.Repositories;
 using MoviesLibraryApp.Services;
@@ -18,6 +20,7 @@ namespace MoviesLibraryApp
         private readonly IMovieProvider _movieProvider;
         private readonly ISeriesProvider _seriesProvider;
         private readonly ICsvReader _csvReader;
+        private readonly MoviesLibraryAppDbContext _moviesLibraryAppDbContext;
 
         public App(IRepository<Series> seriesRepo,
             IRepository<Movie> movieRepo,
@@ -27,7 +30,8 @@ namespace MoviesLibraryApp
             IAuditService<Series> seriesAuditService,
             IMovieProvider movieProvider,
             ISeriesProvider seriesProvider,
-            ICsvReader csvReader)
+            ICsvReader csvReader,
+            MoviesLibraryAppDbContext moviesLibraryAppDbContext)
         {
             _seriesRepo = seriesRepo;
             _movieRepo = movieRepo;
@@ -38,16 +42,129 @@ namespace MoviesLibraryApp
             _movieProvider = movieProvider;
             _seriesProvider = seriesProvider;
             _csvReader = csvReader;
+            _moviesLibraryAppDbContext = moviesLibraryAppDbContext;
+            _moviesLibraryAppDbContext.Database.EnsureCreated();
         }
         
         public void Run()
         {
+            ChangeSelectedData();
+            ReadGroupedProductionsFromDb();
+            DisplayAllProductionsFromDb();
+            //InsertData();
             DisplayProductionsDirectors();
             CsvToXml();
             QueryXml();
             LoadDataFromFiles();
             DisplayMovieInformation();
             DisplaySeriesInformation();
+        }
+
+        public void ChangeSelectedData()
+        {
+            var inception = this.ReadFirst("Inception");
+            inception.Title = "New title!!";
+            _moviesLibraryAppDbContext.SaveChanges();
+        }
+
+        private Movie? ReadFirst(string title)
+        {
+            return _moviesLibraryAppDbContext.Movies.FirstOrDefault(x => x.Title == title);
+        }
+        private void ReadGroupedProductionsFromDb()
+        {
+            Console.WriteLine("Movies grouped by type:");
+            Console.WriteLine("************************");
+
+            var groupsMovies = _moviesLibraryAppDbContext
+                .Movies
+                .GroupBy(x => x.Type)
+                .Select(x => new
+                {
+                    Type = x.Key,
+                    Movies = x.ToList()
+                })
+                .ToList();
+
+            foreach(var group in groupsMovies)
+            {
+                Console.WriteLine(group.Type);
+                foreach(var movies in group.Movies)
+                {
+                    Console.WriteLine($"\t{movies.Title}, {movies.Year}");
+                }
+                Console.WriteLine();
+            }
+
+            Console.WriteLine("Series grouped by type:");
+            Console.WriteLine("************************");
+
+            var groupsSeries = _moviesLibraryAppDbContext
+                .Series
+                .GroupBy(x => x.Type)
+                .Select(x => new
+                {
+                    Type = x.Key,
+                    Series = x.ToList()
+                })
+                .ToList();
+
+            foreach (var group in groupsSeries)
+            {
+                Console.WriteLine(group.Type);
+                foreach (var series in group.Series)
+                {
+                    Console.WriteLine($"\t{series.Title}, {series.Year}");
+                }
+                Console.WriteLine();
+            }
+        }
+
+        public void DisplayAllProductionsFromDb()
+        {
+            var moviesFromDb = _moviesLibraryAppDbContext.Movies.ToList();
+
+            foreach(var movieFromDb in moviesFromDb)
+            {
+                Console.WriteLine($"\t{movieFromDb.Title}, {movieFromDb.Year}");
+            }
+
+            var seriesFromDb = _moviesLibraryAppDbContext.Series.ToList();
+
+            foreach (var serieFromDb in seriesFromDb)
+            {
+                Console.WriteLine($"\t{serieFromDb.Title}, {serieFromDb.Year}");
+            }
+
+        }
+        private void InsertData()
+        {
+            var productions = _csvReader.ProcessProductions("C:\\Users\\elizz\\OneDrive\\Pulpit\\Projekty P\\MoviesLibraryApp\\MoviesLibraryApp\\Resources\\Files\\production.csv");
+
+            foreach (var production in productions)
+            {
+                if (production.MovieOrSeries == "Movie")
+                {
+                    _moviesLibraryAppDbContext.Movies.Add(new Movie()
+                    {
+                        Title = production.Title,
+                        Year = production.Year,
+                        Director = production.Director,
+                        Type = production.Type
+                    });
+                }
+                else if (production.MovieOrSeries == "Series")
+                {
+                    _moviesLibraryAppDbContext.Series.Add(new Series()
+                    {
+                        Title = production.Title,
+                        Year = production.Year,
+                        Director = production.Director,
+                        Type = production.Type
+                    });
+                }
+            }
+                _moviesLibraryAppDbContext.SaveChanges();
         }
 
         private void CsvToXml()
@@ -61,7 +178,8 @@ namespace MoviesLibraryApp
                 new XAttribute("Title", x.Title),
                 new XAttribute("Year", x.Year),
                 new XAttribute("Director", x.Director),
-                new XAttribute("Type", x.Type))));
+                new XAttribute("Type", x.Type),
+                new XAttribute("MovieOrSeries", x.MovieOrSeries))));
 
             document.Add(productions);
             document.Save("production.xml");

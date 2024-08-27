@@ -6,4 +6,5 @@ public class Production
     public int Year { get; set; }
     public string Director { get; set; }
     public string Type { get; set; }
+    public string MovieOrSeries { get; set; }
 }
