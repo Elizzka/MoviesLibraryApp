@@ -33,29 +33,29 @@ namespace MoviesLibraryApp
 
         public void Run()
         {
-            LoadDataFromFiles();
+            LoadDataFromFiles(_moviesLibraryAppDbContext);
         }
 
-        private void LoadDataFromFiles()
+        private void LoadDataFromFiles(MoviesLibraryAppDbContext moviesLibraryAppDbContext)
         {
-            var moviesFromDb = _movieRepo.GetAll().ToList();
-            var seriesFromDb = _seriesRepo.GetAll().ToList();
+            var moviesFromDb = _moviesLibraryAppDbContext.Movies.ToList();
+            var seriesFromDb = _moviesLibraryAppDbContext.Series.ToList();
 
-            if (!_movieRepo.GetAll().Any())
+            if (!_moviesLibraryAppDbContext.Movies.Any())
             {
-                AddInitialMovies();
-                _movieRepo.Save();
+                AddInitialMovies(_moviesLibraryAppDbContext);
+                _moviesLibraryAppDbContext.SaveChanges();
             }
 
-            if (!_seriesRepo.GetAll().Any())
+            if (!_moviesLibraryAppDbContext.Series.Any())
             {
-                AddInitialSeries();
-                _seriesRepo.Save();
+                AddInitialSeries(_moviesLibraryAppDbContext);
+                _moviesLibraryAppDbContext.SaveChanges();
             }
         }
-        private void AddInitialMovies()
+        private void AddInitialMovies(MoviesLibraryAppDbContext moviesLibraryAppDbContext)
         {
-            if (!_movieRepo.GetAll().Any())
+            if (!_moviesLibraryAppDbContext.Movies.Any())
             {
                 var movies = new List<Movie>
                 {
@@ -71,16 +71,16 @@ namespace MoviesLibraryApp
 
                 foreach (var movie in movies)
                 {
-                    _movieRepo.Add(movie);
+                    _moviesLibraryAppDbContext.Movies.Add(movie);
                     _movieAuditService.LogAudit("Initial Add Movie", movie);
                 }
             }
-            _movieRepo.Save();
+            _moviesLibraryAppDbContext.SaveChanges();
         }
 
-        private void AddInitialSeries()
+        private void AddInitialSeries(MoviesLibraryAppDbContext moviesLibraryAppDbContext)
         {
-            if (!_seriesRepo.GetAll().Any())
+            if (!_moviesLibraryAppDbContext.Series.Any())
             {
                 var series = new List<Series>
                 {
@@ -88,16 +88,16 @@ namespace MoviesLibraryApp
                     new Series { Title = "The Crown", Year = 2016, Director = "Peter Morgan",  Type = "Historical" },
                     new Series { Title = "The Watcher", Year = 2022, Director = "Ryan Murphy",  Type = "Horror" },
                     new Series { Title = "New Amsterdam", Year = 2018, Director = "David Schulner",  Type = "Drama"}
-                };
+        };
 
                 foreach (var serie in series)
                 {
-                    _seriesRepo.Add(serie);
+                    _moviesLibraryAppDbContext.Series.Add(serie);
                     _seriesAuditService.LogAudit("Initial Add Series", serie);
                 }
             }
 
-            _seriesRepo.Save();
+            _moviesLibraryAppDbContext.SaveChanges();
         }
     }
 }

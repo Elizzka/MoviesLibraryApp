@@ -6,14 +6,14 @@ namespace MoviesLibraryApp.Data.Repositories
     public class SqlRepository<T> : IRepository<T> where T : class, IEntity, new()
     {
         private readonly DbSet<T> _dbSet;
-        private readonly DbContext _dbContext;
+        private readonly MoviesLibraryAppDbContext _dbContext;
         private readonly Action<T>? _itemAddedCallback;
 
         public event EventHandler<T>? ItemAdded;
         public event EventHandler<T> ItemRemoved;
         public event EventHandler<T> ItemUpdated;
 
-        public SqlRepository(DbContext dbContext, Action<T>? itemAddedCallback = null)
+        public SqlRepository(MoviesLibraryAppDbContext dbContext, Action<T>? itemAddedCallback = null)
         {
             _dbContext = dbContext;
             _dbContext.Database.EnsureCreated();
