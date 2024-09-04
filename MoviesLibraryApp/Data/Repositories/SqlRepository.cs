@@ -9,15 +9,17 @@ namespace MoviesLibraryApp.Data.Repositories
         private readonly DbContext _dbContext;
         private readonly Action<T>? _itemAddedCallback;
 
+        public event EventHandler<T>? ItemAdded;
+        public event EventHandler<T> ItemRemoved;
+        public event EventHandler<T> ItemUpdated;
+
         public SqlRepository(DbContext dbContext, Action<T>? itemAddedCallback = null)
         {
             _dbContext = dbContext;
+            _dbContext.Database.EnsureCreated();
             _dbSet = _dbContext.Set<T>();
             _itemAddedCallback = itemAddedCallback;
         }
-
-        public event EventHandler<T>? ItemAdded;
-        public event EventHandler<T> ItemRemoved;
 
         public IEnumerable<T> GetAll()
         {
@@ -26,13 +28,9 @@ namespace MoviesLibraryApp.Data.Repositories
 
         public void Add(T item)
         {
-            if (!_dbSet.Any(e => e.Id == item.Id))
-            {
-                _dbSet.Add(item);
-                _itemAddedCallback?.Invoke(item);
-                ItemAdded?.Invoke(this, item);
-                _dbContext.SaveChanges();
-            }
+            _dbSet.Add(item);
+            _dbContext.SaveChanges();
+            ItemAdded?.Invoke(this, item);
         }
 
         public T? GetById(int id)
@@ -45,6 +43,13 @@ namespace MoviesLibraryApp.Data.Repositories
             _dbSet.Remove(item);
             _dbContext.SaveChanges();
             ItemRemoved?.Invoke(this, item);
+        }
+
+        public void Update(T item)
+        {
+            _dbSet.Update(item);
+            _dbContext.SaveChanges();
+            ItemUpdated?.Invoke(this, item);
         }
 
         public void Save()

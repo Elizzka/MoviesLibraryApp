@@ -1,5 +1,4 @@
 ﻿using MoviesLibraryApp.Data.Entities;
-using MoviesLibraryApp.Data.Repositories;
 
 namespace MoviesLibraryApp.Data.Repositories.Extensions;
 

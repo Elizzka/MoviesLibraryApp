@@ -1,5 +1,4 @@
 ﻿using Microsoft.EntityFrameworkCore;
-using MoviesLibraryApp.Components.CsvReader.Models;
 using MoviesLibraryApp.Data.Entities;
 
 namespace MoviesLibraryApp.Data;

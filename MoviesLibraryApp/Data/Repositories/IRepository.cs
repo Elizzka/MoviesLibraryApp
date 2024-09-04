@@ -1,5 +1,4 @@
 ﻿using MoviesLibraryApp.Data.Entities;
-using System;
 
 namespace MoviesLibraryApp.Data.Repositories;
 
@@ -8,8 +7,5 @@ public interface IRepository<T> : IReadRepository<T>, IWriteRepository<T>
 {
     event EventHandler<T> ItemAdded;
     event EventHandler<T> ItemRemoved;
-
-    void Add(T item);
-    void Remove(T item);
-    void Save();
+    event EventHandler<T> ItemUpdated;
 }
