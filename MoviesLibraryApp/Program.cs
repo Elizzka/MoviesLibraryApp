@@ -1,7 +1,7 @@
 ﻿using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.DependencyInjection;
 using MoviesLibraryApp;
-using MoviesLibraryApp.Components.CsvReader;
+using MoviesLibraryApp.CsvReader;
 using MoviesLibraryApp.Data;
 using MoviesLibraryApp.Data.Entities;
 using MoviesLibraryApp.Data.Repositories;
