@@ -13,23 +13,19 @@ namespace MoviesLibraryApp.UserCommunication
         private readonly IAuditService<Movie> _movieAuditService;
         private readonly IAuditService<Series> _seriesAuditService;
         private readonly ICsvReader _csvReader;
-        private readonly MoviesLibraryAppDbContext _moviesLibraryAppDbContext;
 
         public UserCommunication(
             IRepository<Series> seriesRepo,
             IRepository<Movie> movieRepo,
             IAuditService<Movie> movieAuditService,
             IAuditService<Series> seriesAuditService,
-            ICsvReader csvReader,
-            MoviesLibraryAppDbContext moviesLibraryAppDbContext)
+            ICsvReader csvReader)
         {
             _seriesRepo = seriesRepo;
             _movieRepo = movieRepo;
             _movieAuditService = movieAuditService;
             _seriesAuditService = seriesAuditService;
             _csvReader = csvReader;
-            _moviesLibraryAppDbContext = moviesLibraryAppDbContext;
-            _moviesLibraryAppDbContext.Database.EnsureCreated();
 
             _movieRepo.ItemAdded += (sender, movie) => LogItemEvent("Added", movie, "Movie", movie.Title);
             _movieRepo.ItemRemoved += (sender, movie) => LogItemEvent("Removed", movie, "Movie", movie.Title);
@@ -75,25 +71,24 @@ namespace MoviesLibraryApp.UserCommunication
                 switch (input)
                 {
                     case "1":
-                        WriteAllToConsole(_moviesLibraryAppDbContext);
+                        WriteAllToConsole();
                         break;
                     case "2":
-                        RemoveItemFromLibrary(_moviesLibraryAppDbContext);
+                        RemoveItemFromLibrary();
                         break;
                     case "3":
-                        AddMovie(_moviesLibraryAppDbContext);
+                        AddMovie();
                         break;
                     case "4":
-                        AddSeries(_moviesLibraryAppDbContext);
+                        AddSeries();
                         break;
                     case "5":
-                        InsertData(_moviesLibraryAppDbContext);
+                        InsertData();
                         break;
                     case "6":
-                        ChangeSelectedData(_moviesLibraryAppDbContext);
+                        ChangeSelectedData();
                         break;
                     case "q":
-                        _moviesLibraryAppDbContext.SaveChanges();
                         return;
                     default:
                         Console.WriteLine("Invalid option, please try again.");
@@ -102,7 +97,7 @@ namespace MoviesLibraryApp.UserCommunication
             }
         }
 
-        public void WriteAllToConsole(MoviesLibraryAppDbContext moviesLibraryAppDbContext)
+        public void WriteAllToConsole()
         {
             var moviesFromDb = _movieRepo.GetAll().ToList();
 
@@ -121,7 +116,7 @@ namespace MoviesLibraryApp.UserCommunication
             }
         }
 
-        public void RemoveItemFromLibrary(MoviesLibraryAppDbContext moviesLibraryAppDbContext)
+        public void RemoveItemFromLibrary()
         {
             Console.WriteLine("Enter a title for the item you want to delete:");
             var title = Console.ReadLine();
@@ -147,7 +142,7 @@ namespace MoviesLibraryApp.UserCommunication
             }
         }
 
-        public void AddMovie(MoviesLibraryAppDbContext moviesLibraryAppDbContext)
+        public void AddMovie()
         {
             Console.WriteLine("Enter the title of the movie you want to add:");
             var title = Console.ReadLine();
@@ -177,7 +172,7 @@ namespace MoviesLibraryApp.UserCommunication
             _movieRepo.Save();
         }
 
-        public void AddSeries(MoviesLibraryAppDbContext moviesLibraryAppDbContext)
+        public void AddSeries()
         {
             Console.WriteLine("Enter the title of the series you want to add:");
             var title = Console.ReadLine();
@@ -206,7 +201,7 @@ namespace MoviesLibraryApp.UserCommunication
             _seriesRepo.Save();
         }
 
-        private void InsertData(MoviesLibraryAppDbContext moviesLibraryAppDbContext)
+        private void InsertData()
         {
             var productions = _csvReader.ProcessProductions("C:\\Users\\elizz\\OneDrive\\Pulpit\\Projekty P\\MoviesLibraryApp\\MoviesLibraryApp\\1_DataAccess\\Resources\\Files\\production.csv");
 
@@ -251,7 +246,7 @@ namespace MoviesLibraryApp.UserCommunication
             }
         }
 
-        public void ChangeSelectedData(MoviesLibraryAppDbContext moviesLibraryAppDbContext)
+        public void ChangeSelectedData()
         {
             Console.WriteLine("Enter the title of the movie or series you want to change:");
             var title = Console.ReadLine();
